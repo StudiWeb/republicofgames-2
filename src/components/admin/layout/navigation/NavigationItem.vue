@@ -1,0 +1,37 @@
+<template>
+  <li class="nav-item d-flex align-items-center">
+    <a class="nav-link d-flex align-items-center" aria-current="page" href="#">
+      <span class="fs-4 me-2">
+        <slot></slot>
+      </span>
+      <span>
+        {{ title }}
+      </span>
+    </a>
+  </li>
+</template>
+
+<script scoped>
+export default {
+  props: ['title']
+}
+</script>
+
+<style scoped>
+.nav-link {
+  font-weight: 500;
+  color: #333;
+}
+.nav-link:hover {
+  color: #2470dc;
+}
+
+.nav-link.active {
+  color: #2470dc;
+}
+
+.sidebar-heading {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+</style>

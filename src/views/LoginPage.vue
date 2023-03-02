@@ -3,7 +3,7 @@
     <main class="form-signin m-auto">
       <form>
         <i class="bi bi-controller fs-1"></i>
-        <h2 class="h3 mb-3 fw-normal">Please log in</h2>
+        <h2 class="h3 mb-3 fw-normal">Log in</h2>
 
         <div class="form-floating">
           <input v-model="login" type="input" class="form-control" placeholder="Your login" />
@@ -14,7 +14,7 @@
           <label>Password</label>
         </div>
 
-        <div v-if="loginData" class="alert alert-danger" role="alert">
+        <div v-if="!validation" class="alert alert-danger" role="alert">
           You have entered invalid login data.
         </div>
 
@@ -27,30 +27,40 @@
       </form>
     </main>
   </div>
+
+  <UploadSpinner v-if="loading" />
 </template>
 
 <script>
+import UploadSpinner from '../components/reusable/UploadSpinner.vue'
+
 export default {
+  components: {
+    UploadSpinner
+  },
+
   data() {
     return {
       login: '',
       password: '',
-      loginData: false,
-      uploading: false
+      validation: true,
+      loading: false
     }
   },
 
   methods: {
-    // checkCredentials() {
-    //   if (this.login === 'admin' && this.password === 'admin') {
-    //     this.uploading = true
-    //     setTimeout(() => {
-    //       this.$router.push('/admin/panel')
-    //     }, '3000')
-    //   } else {
-    //     this.loginData = true
-    //   }
-    // }
+    checkCredentials() {
+      if (this.login === 'admin' && this.password === 'admin') {
+        this.validation = true
+        this.loading = true
+        setTimeout(() => {
+          this.$router.push('/admin')
+          this.loading = false
+        }, '3000')
+      } else {
+        this.validation = false
+      }
+    }
   }
 }
 </script>
