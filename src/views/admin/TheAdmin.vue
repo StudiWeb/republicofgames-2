@@ -15,7 +15,9 @@
             <button class="btn btn-primary btn-lg" type="button">New game</button>
           </div>
         </div>
-        <router-view v-else></router-view>
+        <div v-else class="p-5 col-xxl-6">
+          <router-view></router-view>
+        </div>
       </main>
     </div>
   </div>

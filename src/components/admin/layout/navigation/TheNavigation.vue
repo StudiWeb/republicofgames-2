@@ -3,11 +3,11 @@
     <div class="position-sticky pt-3">
       <ul class="nav flex-column">
         <NavigationHeader title="New game" />
-        <navigation-item title="Add game">
+        <navigation-item title="Add new game">
           <i class="bi bi-plus-circle"></i>
         </navigation-item>
-        <NavigationHeader title="Game information" />
-        <navigation-item title="Basic info">
+        <NavigationHeader title="Fill up / update game information" />
+        <navigation-item title="System requirements">
           <i class="bi bi-card-text"></i>
         </navigation-item>
         <navigation-item title="Cover">
@@ -71,6 +71,7 @@ export default {
   z-index: 100; /* Behind the navbar */
   padding: 48px 0 0; /* Height of navbar */
   box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.1);
+  overflow-y: scroll;
 }
 
 @media (max-width: 767.98px) {
