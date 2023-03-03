@@ -1,8 +1,6 @@
 <template>
+  <PageTitle title="New game" />
   <div class="d-flex flex-column">
-    <div class="d-flex mb-3">
-      <div class="h4 me-3">New game</div>
-    </div>
     <div class="mb-3">
       <label class="form-label">Title <span class="text-danger">*</span></label>
       <input v-model.trim="title" type="text" ref="title" class="form-control" />
@@ -68,7 +66,7 @@
     <template #footer>
       <div class="d-flex justify-content-between align-items-center w-100">
         <div>Do you want to add this game?</div>
-        <div>
+        <div class="d-flex">
           <button class="btn btn-primary me-2" @click="addGame">Yes</button>
           <button class="btn btn-primary" @click="closeDataModal">No</button>
         </div>
@@ -97,11 +95,13 @@
 import database from '../../firebase/database/database'
 import { ref, push } from 'firebase/database'
 
+import PageTitle from '../../components/admin/UI/PageTitle.vue'
 import BaseModal from '../../components/admin/UI/BaseModal.vue'
 import UploadSpinner from '../../components/reusable/UploadSpinner.vue'
 
 export default {
   components: {
+    PageTitle,
     BaseModal,
     UploadSpinner
   },
@@ -148,39 +148,6 @@ export default {
   },
 
   methods: {
-    openDataModal() {
-      this.dataModal = new bootstrap.Modal('#dataModal', {
-        keyboard: false
-      })
-      this.dataModal.show()
-    },
-
-    closeDataModal() {
-      this.dataModal.hide()
-    },
-
-    openValidationModal() {
-      this.validationModal = new bootstrap.Modal('#validationModal', {
-        keyboard: false
-      })
-      this.validationModal.show()
-    },
-
-    closeValidationModal() {
-      this.validationModal.hide()
-    },
-
-    openServerResponseModal() {
-      this.serverResponseModal = new bootstrap.Modal('#serverResponseModal', {
-        keyboard: false
-      })
-      this.serverResponseModal.show()
-    },
-
-    closeServerResponseModal() {
-      this.serverResponseModal.hide()
-    },
-
     resetForm() {
       this.title = ''
       this.developer = ''
@@ -227,7 +194,8 @@ export default {
       this.closeDataModal()
       this.uploading = true
 
-      const game = {
+      let game = {
+        createdBy: 'admin',
         title: this.title,
         developer: this.developer,
         publisher: this.publisher,
@@ -235,9 +203,10 @@ export default {
       }
 
       push(ref(database, 'games'), game)
-        .then(() => {
+        .then((data) => {
           // Data saved successfully!
-          this.$store.dispatch('games/addNewGame', game)
+          const storeData = { id: data._path.pieces_[1], title: this.title }
+          this.$store.dispatch('games/addNewGame', storeData)
           this.serverResponse = `You have just saved ${this.title} successfully!`
           this.openServerResponseModal()
           this.resetForm()
@@ -251,6 +220,39 @@ export default {
           this.resetForm()
           this.uploading = false
         })
+    },
+
+    openDataModal() {
+      this.dataModal = new bootstrap.Modal('#dataModal', {
+        keyboard: false
+      })
+      this.dataModal.show()
+    },
+
+    closeDataModal() {
+      this.dataModal.hide()
+    },
+
+    openValidationModal() {
+      this.validationModal = new bootstrap.Modal('#validationModal', {
+        keyboard: false
+      })
+      this.validationModal.show()
+    },
+
+    closeValidationModal() {
+      this.validationModal.hide()
+    },
+
+    openServerResponseModal() {
+      this.serverResponseModal = new bootstrap.Modal('#serverResponseModal', {
+        keyboard: false
+      })
+      this.serverResponseModal.show()
+    },
+
+    closeServerResponseModal() {
+      this.serverResponseModal.hide()
     }
   }
 }

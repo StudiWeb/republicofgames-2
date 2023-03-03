@@ -1,19 +1,19 @@
 <template>
   <li class="nav-item d-flex align-items-center">
-    <a class="nav-link d-flex align-items-center" aria-current="page" href="#">
+    <router-link class="nav-link d-flex align-items-center" :to="link">
       <span class="fs-4 me-2">
         <slot></slot>
       </span>
       <span>
         {{ title }}
       </span>
-    </a>
+    </router-link>
   </li>
 </template>
 
 <script scoped>
 export default {
-  props: ['title']
+  props: ['title', 'link']
 }
 </script>
 

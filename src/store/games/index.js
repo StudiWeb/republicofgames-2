@@ -22,14 +22,15 @@ export default {
   },
 
   getters: {
+    //loads game ids and title which both are unique identificators of a game
     async loadGames(state) {
-      get(child(ref(database), 'games'))
+      await get(child(ref(database), 'games'))
         .then((snapshot) => {
           if (snapshot.exists()) {
             for (const id in snapshot.val()) {
               state.games.push({
                 id: id,
-                ...snapshot.val()[id]
+                title: snapshot.val()[id].title
               })
             }
           } else {

@@ -3,17 +3,17 @@
     <div class="position-sticky pt-3">
       <ul class="nav flex-column">
         <NavigationHeader title="New game" />
-        <navigation-item title="Add new game">
+        <navigation-item title="Add new game" :link="newGameLink">
           <i class="bi bi-plus-circle"></i>
         </navigation-item>
         <NavigationHeader title="Fill up / update game information" />
-        <navigation-item title="System requirements">
+        <navigation-item title="System requirements" :link="systemRequirementsLink">
           <i class="bi bi-card-text"></i>
         </navigation-item>
-        <navigation-item title="Cover">
+        <navigation-item title="Cover" :link="gameCoverLink">
           <i class="bi bi-file-image"></i>
         </navigation-item>
-        <navigation-item title="Release date">
+        <!-- <navigation-item title="Release date">
           <i class="bi bi-calendar3"></i>
         </navigation-item>
         <navigation-item title="Description">
@@ -27,9 +27,9 @@
         </navigation-item>
         <navigation-item title="Trailer">
           <i class="bi bi-film"></i>
-        </navigation-item>
+        </navigation-item> -->
       </ul>
-      <NavigationHeader title="Manage games" />
+      <!-- <NavigationHeader title="Manage games" />
       <ul class="nav flex-column mb-2">
         <navigation-item title="Game list">
           <i class="bi bi-table"></i>
@@ -37,7 +37,7 @@
         <navigation-item title="All about game">
           <i class="bi bi-card-text"></i>
         </navigation-item>
-      </ul>
+      </ul> -->
     </div>
   </nav>
 </template>
@@ -50,6 +50,19 @@ export default {
   components: {
     NavigationHeader,
     NavigationItem
+  },
+  computed: {
+    newGameLink() {
+      return { name: 'new-game' }
+    },
+
+    systemRequirementsLink() {
+      return { name: 'system-requirements' }
+    },
+
+    gameCoverLink() {
+      return { name: 'game-cover' }
+    }
   }
 }
 </script>
