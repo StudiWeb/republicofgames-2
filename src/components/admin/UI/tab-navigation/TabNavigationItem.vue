@@ -16,6 +16,9 @@ export default {
         case 'cover':
           this.$emit('set-component', 'game-cover')
           break
+        case 'release date list':
+          this.$emit('set-component', 'release-date-list')
+          break
       }
     }
   }

@@ -65,7 +65,6 @@ export default {
       dataModal: false,
       serverResponseModal: null,
       serverResponse: '',
-      uploading: false,
       progressBarValue: 0
     }
   },

@@ -13,6 +13,7 @@ export default {
   methods: {
     setComponent() {
       switch (this.title.toLowerCase()) {
+        //COVER
         case 'add cover':
           this.$emit('set-component', 'add-cover')
           break
@@ -21,6 +22,13 @@ export default {
           break
         case 'delete cover':
           this.$emit('set-component', 'delete-cover')
+          break
+        //RELEASE DATE
+        case 'add release date':
+          this.$emit('set-component', 'add-release-date')
+          break
+        case 'delete release date':
+          this.$emit('set-component', 'delete-release-date')
           break
       }
     }
