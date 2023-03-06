@@ -92,7 +92,7 @@
 </template>
 
 <script>
-import database from '../../firebase/database/database'
+import { database } from '../../firebase/index.js'
 import { ref, push } from 'firebase/database'
 
 import PageTitle from '../../components/admin/UI/PageTitle.vue'

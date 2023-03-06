@@ -1,4 +1,4 @@
-import database from '../../firebase/database/database'
+import { database } from '../../firebase'
 import { ref, get, child } from 'firebase/database'
 
 export default {

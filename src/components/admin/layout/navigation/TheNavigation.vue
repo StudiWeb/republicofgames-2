@@ -6,38 +6,38 @@
         <navigation-item title="Add new game" :link="newGameLink">
           <i class="bi bi-plus-circle"></i>
         </navigation-item>
-        <NavigationHeader title="Fill up / update game information" />
+        <NavigationHeader title="Add / Update game information" />
         <navigation-item title="System requirements" :link="systemRequirementsLink">
           <i class="bi bi-card-text"></i>
         </navigation-item>
         <navigation-item title="Cover" :link="gameCoverLink">
           <i class="bi bi-file-image"></i>
         </navigation-item>
-        <!-- <navigation-item title="Release date">
+        <navigation-item title="Release date" :link="releaseDateLink">
           <i class="bi bi-calendar3"></i>
         </navigation-item>
-        <navigation-item title="Description">
+        <navigation-item title="Description" :link="descriptionLink">
           <i class="bi bi-card-text"></i>
         </navigation-item>
-        <navigation-item title="PEGI">
+        <navigation-item title="PEGI" :link="pegiLink">
           <i class="bi bi-info-square"></i>
         </navigation-item>
-        <navigation-item title="Screens">
+        <navigation-item title="Screens" :link="screensLink">
           <i class="bi bi-images"></i>
         </navigation-item>
-        <navigation-item title="Trailer">
+        <navigation-item title="Trailer" :link="trailerLink">
           <i class="bi bi-film"></i>
-        </navigation-item> -->
+        </navigation-item>
       </ul>
-      <!-- <NavigationHeader title="Manage games" />
+      <NavigationHeader title="Manage games" />
       <ul class="nav flex-column mb-2">
-        <navigation-item title="Game list">
+        <navigation-item title="Game list" :link="gameListLink">
           <i class="bi bi-table"></i>
         </navigation-item>
-        <navigation-item title="All about game">
+        <navigation-item title="All about game" :link="gameInfoLink">
           <i class="bi bi-card-text"></i>
         </navigation-item>
-      </ul> -->
+      </ul>
     </div>
   </nav>
 </template>
@@ -61,7 +61,35 @@ export default {
     },
 
     gameCoverLink() {
-      return { name: 'game-cover' }
+      return { name: 'cover' }
+    },
+
+    releaseDateLink() {
+      return { name: 'release-date' }
+    },
+
+    descriptionLink() {
+      return { name: 'description' }
+    },
+
+    pegiLink() {
+      return { name: 'pegi' }
+    },
+
+    screensLink() {
+      return { name: 'screens' }
+    },
+
+    trailerLink() {
+      return { name: 'trailer' }
+    },
+
+    gameListLink() {
+      return { name: 'game-list' }
+    },
+
+    gameInfoLink() {
+      return { name: 'game-info' }
     }
   }
 }

@@ -5,17 +5,6 @@
   <load-spinner v-if="loading"></load-spinner>
   <div v-else>
     <div v-if="gameId !== 'none'" class="d-flex flex-column">
-      <alert-info>
-        <template #default>
-          <div class="d-flex flex-column">
-            <p>Here you are an example of data.</p>
-            <p>
-              Intel Core i7-8700 3.2 GHz / AMD Ryzen 5 3600 3.6 GHz 16 GB RAM graphic card 8 GB
-              GeForce GTX 1080 Ti / Radeon RX 5700 XT or better 85 GB SSD Windows 10 64-bit
-            </p>
-          </div>
-        </template>
-      </alert-info>
       <div class="mb-3">
         <label class="form-label">Minimum requirements </label>
         <textarea
@@ -94,7 +83,7 @@
 </template>
 
 <script>
-import database from '../../firebase/database/database'
+import { database } from '../../firebase/index.js'
 import { ref, get, child, update } from 'firebase/database'
 
 import PageTitle from '../../components/admin/UI/PageTitle.vue'
