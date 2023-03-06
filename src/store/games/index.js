@@ -30,7 +30,10 @@ export default {
             for (const id in snapshot.val()) {
               state.games.push({
                 id: id,
-                title: snapshot.val()[id].title
+                title: snapshot.val()[id].title,
+                developer: snapshot.val()[id].developer,
+                publisher: snapshot.val()[id].publisher,
+                genre: snapshot.val()[id].genre
               })
             }
           } else {
