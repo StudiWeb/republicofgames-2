@@ -107,14 +107,14 @@ export default {
         .then(() => {
           this.uploading = false
           // Data saved successfully!
-          this.serverResponse = 'You added the introduction date to the game successfully!'
+          this.serverResponse = 'You added the introduction to the game successfully!'
           this.openServerResponseModal()
         })
         .catch((error) => {
           // The write failed...
           this.uploading = false
           this.serverResponse =
-            'Ups something went wrong... you did not add the introduction date to the game>!'
+            'Ups something went wrong... you did not add the introduction to the game>!'
           this.openServerResponseModal()
         })
     },

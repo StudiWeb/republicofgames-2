@@ -91,6 +91,7 @@ export default {
     selectGame(game) {
       this.game = game
       this.gameId = game.id
+      this.component = 'the-information'
     },
 
     setComponent(cmp) {
