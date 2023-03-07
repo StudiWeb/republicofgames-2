@@ -30,6 +30,25 @@ export default {
         case 'delete release date':
           this.$emit('set-component', 'delete-release-date')
           break
+        //DESCRIPTION
+        case 'add introduction':
+          this.$emit('set-component', 'add-introduction')
+          break
+        case 'edit introduction':
+          this.$emit('set-component', 'edit-introduction')
+          break
+        case 'delete introduction':
+          this.$emit('set-component', 'delete-introduction')
+          break
+        case 'add description':
+          this.$emit('set-component', 'add-description')
+          break
+        case 'edit description':
+          this.$emit('set-component', 'edit-description')
+          break
+        case 'delete description':
+          this.$emit('set-component', 'delete-description')
+          break
       }
     }
   }

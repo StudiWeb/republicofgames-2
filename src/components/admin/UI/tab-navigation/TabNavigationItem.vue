@@ -19,6 +19,9 @@ export default {
         case 'release date list':
           this.$emit('set-component', 'release-date-list')
           break
+        case 'information':
+          this.$emit('set-component', 'the-information')
+          break
       }
     }
   }
