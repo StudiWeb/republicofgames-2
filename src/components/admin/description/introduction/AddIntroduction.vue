@@ -1,6 +1,7 @@
 <template>
   <PageSubtitle title="Add introduction" />
-  <div class="d-flex flex-column">
+  <AlertInfo v-if="!hasGameIntroduction" info="This game already has got an introduction." />
+  <div v-else class="d-flex flex-column">
     <div class="mb-3">
       <label class="form-label">Introduction</label>
       <textarea
@@ -49,17 +50,19 @@ import { ref, update } from 'firebase/database'
 import PageSubtitle from '../../UI/PageSubtitle.vue'
 import UploadSpinner from '../../../reusable/UploadSpinner.vue'
 import BaseModal from '../../UI/BaseModal.vue'
+import AlertInfo from '../../UI/AlertInfo.vue'
 
 export default {
   components: {
     PageSubtitle,
     UploadSpinner,
-    BaseModal
+    BaseModal,
+    AlertInfo
   },
 
   emits: ['update-component'],
 
-  props: ['gameId'],
+  props: ['gameId', 'introduction'],
 
   data() {
     return {
@@ -69,6 +72,12 @@ export default {
       serverResponseModal: null,
       serverResponse: '',
       uploading: false
+    }
+  },
+
+  computed: {
+    hasGameIntroduction() {
+      this.introduction !== '' ? true : false
     }
   },
 

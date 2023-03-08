@@ -1,34 +1,37 @@
 <template>
   <PageSubtitle title="Add description" />
-  <component
-    v-for="(cmp, index) in components"
-    :key="index"
-    :is="cmp"
-    :index="index"
-    @add-heading="addHeading"
-    @delete-heading="deleteContent"
-    @remove-heading="removeComponent"
-    @add-paragraph="addParagraph"
-    @delete-paragraph="deleteContent"
-    @remove-paragraph="removeComponent"
-  ></component>
-  <div class="d-flex justify-content-between mt-5">
-    <div class="d-flex">
-      <button @click="toggleAddPanel" class="btn btn-secondary border-0 rounded-0">
-        <i class="fs-2 bi bi-plus"></i>
-      </button>
-      <div v-if="showAddPanel">
-        <button @click="insertHeading" class="btn btn-light border-0 rounded-0">
-          <i class="fs-2 bi bi-card-heading"></i>
+  <AlertInfo v-if="!hasGameDescription" info="This game already has got a description." />
+  <div v-else>
+    <component
+      v-for="(cmp, index) in components"
+      :key="index"
+      :is="cmp"
+      :index="index"
+      @add-heading="addHeading"
+      @delete-heading="deleteContent"
+      @remove-heading="removeComponent"
+      @add-paragraph="addParagraph"
+      @delete-paragraph="deleteContent"
+      @remove-paragraph="removeComponent"
+    ></component>
+    <div class="d-flex justify-content-between mt-5">
+      <div class="d-flex">
+        <button @click="toggleAddPanel" class="btn btn-secondary border-0 rounded-0">
+          <i class="fs-2 bi bi-plus"></i>
         </button>
-        <button @click="insertDescription" class="btn btn-light border-0 rounded-0">
-          <i class="fs-2 bi bi-card-text"></i>
-        </button>
+        <div v-if="showAddPanel">
+          <button @click="insertHeading" class="btn btn-light border-0 rounded-0">
+            <i class="fs-2 bi bi-card-heading"></i>
+          </button>
+          <button @click="insertDescription" class="btn btn-light border-0 rounded-0">
+            <i class="fs-2 bi bi-card-text"></i>
+          </button>
+        </div>
       </div>
+      <button @click="validateDescription" class="btn btn-primary align-self-center">
+        Add description
+      </button>
     </div>
-    <button @click="validateDescription" class="btn btn-primary align-self-center">
-      Add description
-    </button>
   </div>
 
   <UploadSpinner v-if="uploading" />
@@ -69,6 +72,7 @@ import { ref, update } from 'firebase/database'
 import PageSubtitle from '../../UI/PageSubtitle.vue'
 import BaseModal from '../../UI/BaseModal.vue'
 import UploadSpinner from '../../../reusable/UploadSpinner.vue'
+import AlertInfo from '../../UI/AlertInfo.vue'
 
 //components
 import TheHeading from './panel/TheHeading.vue'
@@ -80,12 +84,13 @@ export default {
     TheHeading,
     TheDescription,
     BaseModal,
-    UploadSpinner
+    UploadSpinner,
+    AlertInfo
   },
 
   emits: ['update-component'],
 
-  props: ['gameId'],
+  props: ['gameId', 'description'],
 
   data() {
     return {
@@ -97,6 +102,12 @@ export default {
       serverResponse: '',
       serverResponseModal: null,
       uploading: false
+    }
+  },
+
+  computed: {
+    hasGameDescription() {
+      return this.description.lenght > 0 ? true : false
     }
   },
 
