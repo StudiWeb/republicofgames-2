@@ -10,7 +10,9 @@
   <div>
     <div v-if="hasDescription" class="card">
       <h5 class="card-header">Description</h5>
-      <div class="card-body" v-html="introduction"></div>
+      <div class="card-body">
+        <div v-for="(text, index) in description" :key="index" v-html="text"></div>
+      </div>
     </div>
     <AlertInfo v-else info="This game does not have a description" />
   </div>

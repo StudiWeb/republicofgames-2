@@ -1,14 +1,15 @@
 <template>
-  <div v-if="isAccepted" :id="headingId" class="d-flex flex-column p-2">
+  <div
+    v-if="isAccepted"
+    @mouseover="highlightHeading"
+    @mouseout="unhighlightHeading"
+    :id="headingId"
+    class="d-flex flex-column p-2"
+  >
     <div class="game-heading">
       {{ heading }}
     </div>
-    <button
-      @click="toggleIsAccepted"
-      @mouseover="highlightHeading"
-      @mouseout="unhighlightHeading"
-      class="btn btn-danger align-self-end"
-    >
+    <button @click="toggleIsAccepted" class="btn btn-danger align-self-end">
       <i class="bi bi-x"></i>
     </button>
   </div>
@@ -28,7 +29,7 @@
 
 <script>
 export default {
-  emits: ['remove-heading'],
+  emits: ['add-heading', 'delete-heading', 'remove-heading'],
 
   props: ['index'],
 
@@ -51,6 +52,15 @@ export default {
         this.$refs.acceptHeadingButton.disabled = false
       } else {
         this.$refs.acceptHeadingButton.disabled = true
+      }
+    },
+
+    isAccepted(accepted) {
+      if (accepted === true) {
+        const heading = `<h4 class="game-heading">${this.heading}</h4>`
+        this.$emit('add-heading', this.index, heading)
+      } else {
+        this.$emit('delete-heading', this.index)
       }
     }
   },

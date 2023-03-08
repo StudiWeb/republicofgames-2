@@ -82,6 +82,7 @@ export default {
       if (id !== 'none') {
         this.loading = true
         await this.loadIntroduction()
+        await this.loadDescription()
         this.loading = false
       }
     }
@@ -101,6 +102,7 @@ export default {
     async updateComponent() {
       this.loading = true
       await this.loadIntroduction()
+      await this.loadDescription()
       this.loading = false
       this.component = 'the-information'
     },
@@ -110,6 +112,20 @@ export default {
         .then((snapshot) => {
           if (snapshot.exists()) {
             this.introduction = snapshot.val().introduction ? snapshot.val().introduction : ''
+          } else {
+            console.log('No data available')
+          }
+        })
+        .catch((error) => {
+          console.error(error)
+        })
+    },
+
+    async loadDescription() {
+      await get(child(ref(database), `games/${this.gameId}`))
+        .then((snapshot) => {
+          if (snapshot.exists()) {
+            this.description = snapshot.val().description ? snapshot.val().description : ''
           } else {
             console.log('No data available')
           }

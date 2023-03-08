@@ -1,12 +1,13 @@
 <template>
-  <div v-if="isAccepted" :id="paragraphId" class="d-flex flex-column p-2">
+  <div
+    v-if="isAccepted"
+    @mouseover="highlightParagraph"
+    @mouseout="unhighlightParagraph"
+    :id="paragraphId"
+    class="d-flex flex-column p-2"
+  >
     <div class="game-paragraph">{{ paragraph }}</div>
-    <button
-      @click="toggleIsAccepted"
-      @mouseover="highlightParagraph"
-      @mouseout="unhighlightParagraph"
-      class="btn btn-danger align-self-end mb-1"
-    >
+    <button @click="toggleIsAccepted" class="btn btn-danger align-self-end mb-1">
       <i class="bi bi-x"></i>
     </button>
   </div>
@@ -26,7 +27,7 @@
 
 <script>
 export default {
-  emits: ['remove-paragraph'],
+  emits: ['add-paragraph', 'delete-paragraph', 'remove-paragraph'],
 
   props: ['index'],
 
@@ -49,6 +50,15 @@ export default {
         this.$refs.acceptParagraphButton.disabled = false
       } else {
         this.$refs.acceptParagraphButton.disabled = true
+      }
+    },
+
+    isAccepted(accepted) {
+      if (accepted === true) {
+        const paragraph = `<p class="game-paragraph">${this.paragraph}</p>`
+        this.$emit('add-paragraph', this.index, paragraph)
+      } else {
+        this.$emit('delete-paragraph', this.index)
       }
     }
   },
