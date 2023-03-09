@@ -42,7 +42,6 @@ export default {
 
   created() {
     this.loadGames()
-    console.log(this.games)
   },
 
   methods: {

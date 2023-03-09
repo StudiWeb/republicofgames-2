@@ -37,11 +37,10 @@
           {{ obj.value }}
         </div>
       </div>
-      {{ newDescription }}
     </template>
     <template #footer>
       <div class="d-flex justify-content-between align-items-center w-100">
-        <div>Do you want to add this description to the game?</div>
+        <div>Do you want to edit this description?</div>
         <div class="d-flex">
           <button class="btn btn-primary me-2" @click="editDescription">Yes</button>
           <button class="btn btn-primary" @click="closeDataModal">No</button>

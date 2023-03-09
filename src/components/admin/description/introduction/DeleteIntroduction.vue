@@ -38,7 +38,7 @@
 
 <script>
 import { database } from '../../../../firebase'
-import { ref, update } from 'firebase/database'
+import { ref, set } from 'firebase/database'
 
 import AlertInfo from '../../UI/AlertInfo.vue'
 import BaseModal from '../../UI/BaseModal.vue'
@@ -78,9 +78,7 @@ export default {
     async deleteIntroduction() {
       this.closeDataModal()
       this.uploading = true
-      await update(ref(database, `games/${this.gameId}`), {
-        introduction: ''
-      })
+      await set(ref(database, `games/${this.gameId}/introduction`), null)
         .then(() => {
           this.uploading = false
           // Data saved successfully!
