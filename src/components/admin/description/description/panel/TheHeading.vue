@@ -1,15 +1,15 @@
 <template>
   <div
-    v-if="isAccepted"
+    v-if="hasValue"
     @mouseover="highlightHeading"
     @mouseout="unhighlightHeading"
     :id="headingId"
     class="d-flex flex-column p-2"
   >
     <div class="game-heading">
-      {{ heading }}
+      {{ value }}
     </div>
-    <button @click="toggleIsAccepted" class="btn btn-danger align-self-end">
+    <button @click="cancelHeading" class="btn btn-danger align-self-end">
       <i class="bi bi-x"></i>
     </button>
   </div>
@@ -19,7 +19,7 @@
       <input v-model.trim="heading" type="text" class="form-control" />
     </div>
     <div class="align-self-end">
-      <button @click="toggleIsAccepted" class="btn btn-success me-1" ref="acceptHeadingButton">
+      <button @click="confirmHeading" class="btn btn-success me-1" ref="acceptHeadingButton">
         <i class="bi bi-check"></i>
       </button>
       <button @click="removeHeading" class="btn btn-danger"><i class="bi bi-x"></i></button>
@@ -28,14 +28,19 @@
 </template>
 
 <script>
+import ContentPanel from './ContentPanel.vue'
+
 export default {
+  components: {
+    ContentPanel
+  },
+
   emits: ['add-heading', 'delete-heading', 'remove-heading'],
 
-  props: ['index'],
+  props: ['index', 'value'],
 
   data() {
     return {
-      isAccepted: false,
       heading: ''
     }
   },
@@ -43,39 +48,40 @@ export default {
   computed: {
     headingId() {
       return 'heading-' + this.index
-    }
-  },
-
-  watch: {
-    heading(heading) {
-      if (heading !== '') {
-        this.$refs.acceptHeadingButton.disabled = false
-      } else {
-        this.$refs.acceptHeadingButton.disabled = true
-      }
     },
 
-    isAccepted(accepted) {
-      if (accepted === true) {
-        const heading = `<h4 class="game-heading">${this.heading}</h4>`
-        this.$emit('add-heading', this.index, heading)
-      } else {
-        this.$emit('delete-heading', this.index)
-      }
+    hasValue() {
+      return this.value !== '' ? true : false
     }
   },
 
+  // watch: {
+  //   heading(heading) {
+  //     if (heading !== '') {
+  //       this.$refs.acceptHeadingButton.disabled = false
+  //     } else {
+  //       this.$refs.acceptHeadingButton.disabled = true
+  //     }
+  //   }
+  // },
+
   mounted() {
-    this.$refs.acceptHeadingButton.disabled = true
+    //this.$refs.acceptHeadingButton.disabled = true
+    if (this.value !== '') this.heading = this.value
   },
 
   methods: {
-    removeHeading() {
-      this.$emit('remove-heading', this.index)
+    confirmHeading() {
+      this.$emit('add-heading', this.index, this.heading)
     },
 
-    toggleIsAccepted() {
-      this.isAccepted = !this.isAccepted
+    cancelHeading() {
+      this.$emit('delete-heading', this.index, { component: 'the-heading', value: '' })
+    },
+
+    removeHeading() {
+      console.log(this.index)
+      this.$emit('remove-heading', this.index)
     },
 
     highlightHeading() {

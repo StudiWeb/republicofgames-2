@@ -11,7 +11,16 @@
     <div v-if="hasDescription" class="card">
       <h5 class="card-header">Description</h5>
       <div class="card-body">
-        <div v-for="(text, index) in description" :key="index" v-html="text"></div>
+        <div v-for="(obj, index) in description" :key="index">
+          <div
+            :class="{
+              'game-heading': obj.type === 'heading',
+              'game-paragraph': obj.type === 'paragraph'
+            }"
+          >
+            {{ obj.value }}
+          </div>
+        </div>
       </div>
     </div>
     <AlertInfo v-else info="This game does not have a description" />
@@ -34,7 +43,7 @@ export default {
     },
 
     hasDescription() {
-      return this.description !== '' ? true : false
+      return this.description.length > 0 ? true : false
     }
   }
 }

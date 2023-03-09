@@ -1,11 +1,12 @@
 <template>
   <PageSubtitle title="Add description" />
-  <AlertInfo v-if="!hasGameDescription" info="This game already has got a description." />
+  <AlertInfo v-if="hasGameDescription" info="This game already has got a description." />
   <div v-else>
     <component
-      v-for="(cmp, index) in components"
+      v-for="(data, index) in components"
       :key="index"
-      :is="cmp"
+      :is="data.component"
+      :value="data.value"
       :index="index"
       @add-heading="addHeading"
       @delete-heading="deleteContent"
@@ -14,20 +15,8 @@
       @delete-paragraph="deleteContent"
       @remove-paragraph="removeComponent"
     ></component>
-    <div class="d-flex justify-content-between mt-5">
-      <div class="d-flex">
-        <button @click="toggleAddPanel" class="btn btn-secondary border-0 rounded-0">
-          <i class="fs-2 bi bi-plus"></i>
-        </button>
-        <div v-if="showAddPanel">
-          <button @click="insertHeading" class="btn btn-light border-0 rounded-0">
-            <i class="fs-2 bi bi-card-heading"></i>
-          </button>
-          <button @click="insertDescription" class="btn btn-light border-0 rounded-0">
-            <i class="fs-2 bi bi-card-text"></i>
-          </button>
-        </div>
-      </div>
+    <div class="d-flex justify-content-between mt-3">
+      <ContentPanel @insert-heading="insertHeading" @insert-description="insertDescription" />
       <button @click="validateDescription" class="btn btn-primary align-self-center">
         Add description
       </button>
@@ -36,9 +25,18 @@
 
   <UploadSpinner v-if="uploading" />
 
-  <base-modal id="dataModal" title="Game cover">
+  <base-modal id="dataModal" title="Description">
     <template #body>
-      <div v-for="(text, index) in description" :key="index" v-html="text"></div>
+      <div v-for="(obj, index) in newDescription" :key="index">
+        <div
+          :class="{
+            'game-heading': obj.type === 'heading',
+            'game-paragraph': obj.type === 'paragraph'
+          }"
+        >
+          {{ obj.value }}
+        </div>
+      </div>
     </template>
     <template #footer>
       <div class="d-flex justify-content-between align-items-center w-100">
@@ -73,19 +71,20 @@ import PageSubtitle from '../../UI/PageSubtitle.vue'
 import BaseModal from '../../UI/BaseModal.vue'
 import UploadSpinner from '../../../reusable/UploadSpinner.vue'
 import AlertInfo from '../../UI/AlertInfo.vue'
-
+import ContentPanel from './panel/ContentPanel.vue'
 //components
 import TheHeading from './panel/TheHeading.vue'
-import TheDescription from './panel/TheDescription.vue'
+import TheParagraph from './panel/TheParagraph.vue'
 
 export default {
   components: {
     PageSubtitle,
     TheHeading,
-    TheDescription,
+    TheParagraph,
     BaseModal,
     UploadSpinner,
-    AlertInfo
+    AlertInfo,
+    ContentPanel
   },
 
   emits: ['update-component'],
@@ -94,9 +93,8 @@ export default {
 
   data() {
     return {
-      showAddPanel: false,
       components: [],
-      description: [],
+      newDescription: [],
       dataModal: null,
       validationModal: null,
       serverResponse: '',
@@ -107,59 +105,50 @@ export default {
 
   computed: {
     hasGameDescription() {
-      return this.description.lenght > 0 ? true : false
+      return this.description.length > 0 ? true : false
     }
   },
 
   methods: {
-    toggleAddPanel() {
-      this.showAddPanel = !this.showAddPanel
-    },
-
     insertHeading() {
-      this.components.push('the-heading')
-      this.description.push('')
+      this.components.push({ component: 'the-heading', value: '' })
     },
 
     insertDescription() {
-      this.components.push('the-description')
-      this.description.push('')
+      this.components.push({ component: 'the-paragraph', value: '' })
     },
 
     addHeading(index, heading) {
-      console.log('before adding heading:')
-      console.log(this.description)
-      console.log(`adding ${heading} at ${index}`)
-      this.description.splice(index, 1, heading)
-      console.log('after adding heading:')
-      console.log(this.description)
+      this.components.splice(index, 1, { component: 'the-heading', value: heading })
     },
 
     addParagraph(index, paragraph) {
-      console.log('before adding paragraph:')
-      console.log(this.description)
-      console.log(`adding ${paragraph} at ${index}`)
-      this.description.splice(index, 1, paragraph)
-      console.log('after adding paragraph:')
-      console.log(this.description)
+      this.components.splice(index, 1, { component: 'the-paragraph', value: paragraph })
     },
 
-    deleteContent(index) {
-      console.log(`removing at ${index}`)
-      this.description.splice(index, 1, '')
-      console.log(this.description)
+    deleteContent(index, value) {
+      this.components.splice(index, 1, value)
     },
 
     removeComponent(index) {
-      delete this.components[index]
+      console.log(this.components)
+      this.components.splice(index, 1, { component: '', value: '' })
     },
 
     validateDescription() {
       let validation = false
+      this.newDescription = []
 
-      this.description.forEach((text) => {
-        if (text !== '') {
+      this.components.forEach((cmp) => {
+        console.log(cmp)
+        if (cmp.value !== '') {
           validation = true
+
+          if (cmp.component === 'the-heading')
+            this.newDescription.push({ type: 'heading', value: cmp.value })
+
+          if (cmp.component === 'the-paragraph')
+            this.newDescription.push({ type: 'paragraph', value: cmp.value })
         }
       })
 
@@ -173,16 +162,9 @@ export default {
     async addDescription() {
       this.closeDataModal()
 
-      let description = []
-      this.description.forEach((text) => {
-        if (text !== '') {
-          description.push(text)
-        }
-      })
-
       this.uploading = true
       await update(ref(database, `games/${this.gameId}`), {
-        description: description
+        description: this.newDescription
       })
         .then(() => {
           // Data saved successfully!
@@ -219,7 +201,6 @@ export default {
 
     closeValidationModal() {
       this.validationModal.hide()
-      // this.$emit('update-component')
     },
 
     openServerResponseModal() {

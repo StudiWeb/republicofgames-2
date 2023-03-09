@@ -1,11 +1,11 @@
 <template>
   <PageSubtitle title="Add introduction" />
-  <AlertInfo v-if="!hasGameIntroduction" info="This game already has got an introduction." />
+  <AlertInfo v-if="hasGameIntroduction" info="This game already has got an introduction." />
   <div v-else class="d-flex flex-column">
     <div class="mb-3">
       <label class="form-label">Introduction</label>
       <textarea
-        v-model.trim="introduction"
+        v-model.trim="newIntroduction"
         id="introduction"
         class="form-control"
         placeholder="introduction ..."
@@ -20,9 +20,9 @@
 
   <UploadSpinner v-if="uploading" />
 
-  <base-modal id="dataModal" title="Release date">
+  <base-modal id="dataModal" title="Add introduction">
     <template #body>
-      <p v-html="htmlIntroduction"></p>
+      <p>{{ newIntroduction }}</p>
     </template>
     <template #footer>
       <div class="d-flex justify-content-between align-items-center w-100">
@@ -66,8 +66,7 @@ export default {
 
   data() {
     return {
-      introduction: '',
-      htmlIntroduction: '',
+      newIntroduction: '',
       dataModal: null,
       serverResponseModal: null,
       serverResponse: '',
@@ -77,13 +76,13 @@ export default {
 
   computed: {
     hasGameIntroduction() {
-      this.introduction !== '' ? true : false
+      return this.introduction !== '' ? true : false
     }
   },
 
   watch: {
-    introduction(introduction) {
-      if (introduction !== '') {
+    introduction(newIntroduction) {
+      if (newIntroduction !== '') {
         document.getElementById('introduction').classList.remove('is-invalid')
       }
     }
@@ -93,11 +92,9 @@ export default {
     validateIntroduction() {
       let validation = true
 
-      if (this.introduction === '') {
+      if (this.newIntroduction === '') {
         validation = false
         document.getElementById('introduction').classList.add('is-invalid')
-      } else {
-        this.htmlIntroduction = '<p class="game-paragraph">' + this.introduction + '</p>'
       }
 
       if (validation) {
@@ -111,7 +108,7 @@ export default {
       this.closeDataModal()
       this.uploading = true
       await update(ref(database, `games/${this.gameId}`), {
-        introduction: this.htmlIntroduction
+        introduction: this.newIntroduction
       })
         .then(() => {
           this.uploading = false

@@ -20,9 +20,9 @@
 
   <UploadSpinner v-if="uploading" />
 
-  <base-modal id="dataModal" title="Release date">
+  <base-modal id="dataModal" title="Edit introduction">
     <template #body>
-      <p v-html="htmlIntroduction"></p>
+      <p>{{ newIntroduction }}</p>
     </template>
     <template #footer>
       <div class="d-flex justify-content-between align-items-center w-100">
@@ -67,7 +67,6 @@ export default {
   data() {
     return {
       newIntroduction: '',
-      htmlIntroduction: '',
       dataModal: null,
       serverResponseModal: null,
       serverResponse: '',
@@ -104,8 +103,6 @@ export default {
       if (this.newIntroduction === '') {
         validation = false
         document.getElementById('introduction').classList.add('is-invalid')
-      } else {
-        this.htmlIntroduction = '<p class="game-paragraph">' + this.newIntroduction + '</p>'
       }
 
       if (validation) {
@@ -119,19 +116,18 @@ export default {
       this.closeDataModal()
       this.uploading = true
       await update(ref(database, `games/${this.gameId}`), {
-        introduction: this.htmlIntroduction
+        introduction: this.newIntroduction
       })
         .then(() => {
           this.uploading = false
           // Data saved successfully!
-          this.serverResponse = 'You added the introduction date to the game successfully!'
+          this.serverResponse = 'You edited the introduction   successfully!'
           this.openServerResponseModal()
         })
         .catch((error) => {
           // The write failed...
           this.uploading = false
-          this.serverResponse =
-            'Ups something went wrong... you did not add the introduction date to the game>!'
+          this.serverResponse = 'Ups something went wrong... You did not edit the introduction.'
           this.openServerResponseModal()
         })
     },

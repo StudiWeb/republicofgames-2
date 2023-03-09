@@ -71,7 +71,7 @@ export default {
       game: null,
       gameId: 'none',
       introduction: '',
-      description: '',
+      description: [],
       component: 'the-information',
       loading: false
     }
@@ -110,7 +110,8 @@ export default {
     async loadIntroduction() {
       await get(child(ref(database), `games/${this.gameId}`))
         .then((snapshot) => {
-          if (snapshot.exists()) {
+          if (snapshot.exists(snapshot.val().introduction)) {
+            console.log()
             this.introduction = snapshot.val().introduction ? snapshot.val().introduction : ''
           } else {
             console.log('No data available')
@@ -125,7 +126,7 @@ export default {
       await get(child(ref(database), `games/${this.gameId}`))
         .then((snapshot) => {
           if (snapshot.exists()) {
-            this.description = snapshot.val().description ? snapshot.val().description : ''
+            this.description = snapshot.val().description ? snapshot.val().description : []
           } else {
             console.log('No data available')
           }
