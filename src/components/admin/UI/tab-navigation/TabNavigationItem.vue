@@ -22,6 +22,12 @@ export default {
         case 'information':
           this.$emit('set-component', 'the-information')
           break
+        case 'screens':
+          this.$emit('set-component', 'screen-list')
+          break
+        case 'add screen':
+          this.$emit('set-component', 'add-screen')
+          break
       }
     }
   }
