@@ -49,6 +49,16 @@ export default {
         case 'delete description':
           this.$emit('set-component', 'delete-description')
           break
+        //TRAILER
+        case 'add trailer':
+          this.$emit('set-component', 'add-trailer')
+          break
+        case 'edit trailer':
+          this.$emit('set-component', 'edit-trailer')
+          break
+        case 'delete trailer':
+          this.$emit('set-component', 'delete-trailer')
+          break
       }
     }
   }

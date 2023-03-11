@@ -28,6 +28,9 @@ export default {
         case 'add screen':
           this.$emit('set-component', 'add-screen')
           break
+        case 'trailer':
+          this.$emit('set-component', 'the-trailer')
+          break
       }
     }
   }

@@ -1,5 +1,5 @@
 <template>
-  <PageSubtitle title="Screens" />
+  <PageTitle title="Screens" />
   <SelectGame @select-game="selectGame" />
   <div v-if="gameId !== 'none'">
     <LoadSpinner v-if="loading" />
@@ -25,7 +25,7 @@ import { database } from '../../firebase'
 import { ref, get, child } from 'firebase/database'
 //components used in template
 import SelectGame from '../../components/admin/UI/SelectGame.vue'
-import PageSubtitle from '../../components/admin/UI/PageSubtitle.vue'
+import PageTitle from '../../components/admin/UI/PageTitle.vue'
 import TabNavigation from '../../components/admin/UI/tab-navigation/TabNavigation.vue'
 import TabNavigationItem from '../../components/admin/UI/tab-navigation/TabNavigationItem.vue'
 import DropdownMenu from '../../components/admin/UI/tab-navigation/DropdownMenu.vue'
@@ -38,7 +38,7 @@ import AddScreen from '../../components/admin/screens/AddScreen.vue'
 export default {
   components: {
     SelectGame,
-    PageSubtitle,
+    PageTitle,
     TabNavigation,
     TabNavigationItem,
     DropdownMenu,
