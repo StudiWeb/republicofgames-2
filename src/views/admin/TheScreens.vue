@@ -83,7 +83,6 @@ export default {
     },
 
     async updateScreens() {
-      console.log('xd')
       this.loading = true
       await this.loadScreens()
       this.loading = false
@@ -91,18 +90,10 @@ export default {
 
     async loadScreens() {
       this.screens = []
-      await get(child(ref(database), `screens`))
+      await get(child(ref(database), `games/${this.gameId}/screens`))
         .then((snapshot) => {
           if (snapshot.exists()) {
-            for (const id in snapshot.val()) {
-              if (snapshot.val()[id].gameId === this.gameId) {
-                this.screens.push({
-                  id: id,
-                  file: snapshot.val()[id].file,
-                  url: snapshot.val()[id].url
-                })
-              }
-            }
+            this.screens = snapshot.val()
           } else {
             console.log('No data available')
           }

@@ -96,18 +96,10 @@ export default {
 
     async loadReleaseDates() {
       this.releaseDates = []
-      await get(child(ref(database), `releaseDates`))
+      await get(child(ref(database), `games/${this.gameId}/releaseDates`))
         .then((snapshot) => {
           if (snapshot.exists()) {
-            for (const id in snapshot.val()) {
-              if (snapshot.val()[id].gameId === this.gameId) {
-                this.releaseDates.push({
-                  id: id,
-                  date: snapshot.val()[id].date,
-                  platforms: snapshot.val()[id].platforms
-                })
-              }
-            }
+            this.releaseDates = snapshot.val()
           } else {
             console.log('No data available')
           }

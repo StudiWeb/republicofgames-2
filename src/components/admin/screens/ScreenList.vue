@@ -7,8 +7,11 @@
         @load-screens="loadScreens"
         v-for="(screen, index) in screens"
         :key="index"
+        :index="index"
         :screen="screen"
+        :screens="screens"
         :gameTitle="gameTitle"
+        :gameId="gameId"
       />
     </div>
   </div>

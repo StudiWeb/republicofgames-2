@@ -12,17 +12,34 @@ export default {
   mutations: {
     addNewGame(state, game) {
       state.games.push(game)
+    },
+
+    updateGameData(state, data) {
+      const id = data.id
+      const title = data.title
+      const developer = data.developer
+      const publisher = data.publisher
+      const genre = data.genre
+
+      const game = state.games.find((game) => game.id === id)
+      game.title = title
+      game.developer = developer
+      game.publisher = publisher
+      game.genre = genre
     }
   },
 
   actions: {
     addNewGame(context, game) {
       context.commit('addNewGame', game)
+    },
+
+    updateGameData(context, data) {
+      context.commit('updateGameData', data)
     }
   },
 
   getters: {
-    //loads game ids and title which both are unique identificators of a game
     async loadGames(state) {
       await get(child(ref(database), 'games'))
         .then((snapshot) => {

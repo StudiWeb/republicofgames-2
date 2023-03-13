@@ -1,26 +1,26 @@
 <template>
-  <PageTitle title="New game" />
+  <PageSubtitle title="Edit game" />
   <div class="d-flex flex-column">
     <div class="mb-3">
       <label class="form-label">Title <span class="text-danger">*</span></label>
-      <input v-model.trim="title" type="text" ref="title" class="form-control" />
+      <input v-model.trim="title" type="text" id="title" class="form-control" />
       <div class="invalid-feedback" v-if="!gameExists">This field cannot be empty.</div>
       <div class="invalid-feedback" v-if="gameExists">This game is already added to the app.</div>
     </div>
     <div class="mb-3">
       <label class="form-label">Developer <span class="text-danger">*</span></label>
-      <input v-model.trim="developer" type="text" ref="developer" class="form-control" />
+      <input v-model.trim="developer" type="text" id="developer" class="form-control" />
       <div class="invalid-feedback">This field cannot be empty.</div>
     </div>
     <div class="mb-3">
       <label class="form-label">Publisher <span class="text-danger">*</span></label>
-      <input v-model.trim="publisher" type="text" ref="publisher" class="form-control" />
+      <input v-model.trim="publisher" type="text" id="publisher" class="form-control" />
       <div class="invalid-feedback">This field cannot be empty.</div>
     </div>
 
     <div class="mb-5">
       <label class="form-label">Genre <span class="text-danger">*</span></label>
-      <select v-model.trim="genre" ref="genre" class="form-select">
+      <select v-model.trim="genre" id="genre" class="form-select">
         <option value="none">none</option>
         <option value="action">Action</option>
         <option value="fighting">Fighting</option>
@@ -37,8 +37,10 @@
       <div class="invalid-feedback">This field cannot be set to none.</div>
     </div>
 
-    <button @click="validateForm" class="btn btn-primary align-self-end">Add game</button>
+    <button @click="validateData" class="btn btn-primary align-self-end">Edit data</button>
   </div>
+
+  <UploadSpinner v-if="uploading" />
 
   <base-modal id="dataModal" title="New Game">
     <template #body>
@@ -65,9 +67,9 @@
     </template>
     <template #footer>
       <div class="d-flex justify-content-between align-items-center w-100">
-        <div>Do you want to add this game?</div>
+        <div>Do you want to edit this data?</div>
         <div class="d-flex">
-          <button class="btn btn-primary me-2" @click="addGame">Yes</button>
+          <button class="btn btn-primary me-2" @click="editData">Yes</button>
           <button class="btn btn-primary" @click="closeDataModal">No</button>
         </div>
       </div>
@@ -87,24 +89,25 @@
       <button class="btn btn-primary" @click="closeServerResponseModal">Close</button>
     </template>
   </base-modal>
-
-  <upload-spinner v-if="uploading"></upload-spinner>
 </template>
-
 <script>
-import { database } from '../../firebase/index.js'
-import { ref, push } from 'firebase/database'
+import { database } from '../../../firebase'
+import { ref, update } from 'firebase/database'
 
-import PageTitle from '../../components/admin/UI/PageTitle.vue'
-import BaseModal from '../../components/admin/UI/BaseModal.vue'
-import UploadSpinner from '../../components/reusable/UploadSpinner.vue'
+import PageSubtitle from '../UI/PageSubtitle.vue'
+import BaseModal from '../UI/BaseModal.vue'
+import UploadSpinner from '../../reusable/UploadSpinner.vue'
 
 export default {
   components: {
-    PageTitle,
+    PageSubtitle,
     BaseModal,
     UploadSpinner
   },
+
+  emits: ['update-component'],
+
+  props: ['gameId', 'game'],
 
   data() {
     return {
@@ -114,111 +117,114 @@ export default {
       genre: 'none',
       gameExists: false,
       dataModal: false,
-      validationModal: null,
+      validationModal: false,
       serverResponseModal: null,
       serverResponse: '',
       uploading: false
     }
   },
 
+  computed: {
+    gameTitles() {
+      return this.$store.getters['games/gameTitles'].filter((title) => title !== this.game.title)
+    }
+  },
+
   watch: {
     title(title) {
       if (title !== '') {
-        this.$refs.title.classList.remove('is-invalid')
+        this.gameExists = false
+        document.getElementById('title').classList.remove('is-invalid')
+
+        if (this.gameTitles.find((title) => title === this.title)) {
+          this.gameExists = true
+          document.getElementById('title').classList.add('is-invalid')
+        }
+      } else {
+        document.getElementById('title').classList.add('is-invalid')
       }
     },
 
     developer(developer) {
       if (developer !== '') {
-        this.$refs.developer.classList.remove('is-invalid')
+        document.getElementById('developer').classList.remove('is-invalid')
+      } else {
+        document.getElementById('developer').classList.add('is-invalid')
       }
     },
 
     publisher(publisher) {
       if (publisher !== '') {
-        this.$refs.publisher.classList.remove('is-invalid')
+        document.getElementById('publisher').classList.remove('is-invalid')
+      } else {
+        document.getElementById('publisher').classList.add('is-invalid')
       }
     },
 
     genre(genre) {
       if (genre !== 'none') {
-        this.$refs.genre.classList.remove('is-invalid')
+        document.getElementById('genre').classList.remove('is-invalid')
+      } else {
+        document.getElementById('genre').classList.add('is-invalid')
       }
     }
   },
 
+  mounted() {
+    this.title = this.game.title
+    this.developer = this.game.developer
+    this.publisher = this.game.publisher
+    this.genre = this.game.genre
+  },
+
   methods: {
-    resetForm() {
-      this.title = ''
-      this.developer = ''
-      this.publisher = ''
-      this.genre = ''
-    },
-
-    validateForm() {
+    validateData() {
       let validation = true
-      const usedTitles = this.$store.getters['games/gameTitles']
 
-      if (this.title === '') {
-        validation = false
-        this.$refs.title.classList.add('is-invalid')
-      }
+      if (this.title === '') validation = false
 
-      if (usedTitles.find((t) => t === this.title)) {
-        validation = false
-        this.gameExists = true
-        this.$refs.title.classList.add('is-invalid')
-      } else {
-        this.gameExists = false
-      }
+      if (this.developer === '') validation = false
 
-      if (this.developer === '') {
-        validation = false
-        this.$refs.developer.classList.add('is-invalid')
-      }
+      if (this.publisher === '') validation = false
 
-      if (this.publisher === '') {
-        validation = false
-        this.$refs.publisher.classList.add('is-invalid')
-      }
+      if (this.genre === 'none') validation = false
 
-      if (this.genre === 'none') {
-        validation = false
-        this.$refs.genre.classList.add('is-invalid')
-      }
+      if (this.gameTitles.find((title) => title === this.title)) validation = false
 
-      validation ? this.openDataModal() : this.openValidationModal()
+      if (validation) this.openDataModal()
+      else this.openValidationModal()
     },
 
-    async addGame() {
+    editData() {
       this.closeDataModal()
-      this.uploading = true
 
-      let game = {
-        createdBy: 'admin',
+      const data = {
+        id: this.gameId,
         title: this.title,
         developer: this.developer,
         publisher: this.publisher,
         genre: this.genre
       }
 
-      push(ref(database, 'games'), game)
-        .then((data) => {
+      this.uploading = true
+      update(ref(database, `games/${this.gameId}`), {
+        title: this.title,
+        developer: this.developer,
+        publisher: this.publisher,
+        genre: this.genre
+      })
+        .then(() => {
           // Data saved successfully!
-          const storeData = { id: data._path.pieces_[1], title: this.title }
-          this.$store.dispatch('games/addNewGame', storeData)
-          this.serverResponse = `You have just saved ${this.title} successfully!`
-          this.openServerResponseModal()
-          this.resetForm()
           this.uploading = false
+          this.$store.dispatch('games/updateGameData', data)
+          this.serverResponse = `You edited the data successfully!`
+          this.openServerResponseModal()
         })
         .catch((error) => {
           // The write failed...
-          throw new Error('The write data failed')
-          this.serverResponse = `Something went wrong... ${this.title} has not been saved.`
-          this.openServerResponseModal()
-          this.resetForm()
           this.uploading = false
+          this.serverResponse = 'Something went wrong... You did not edit the data.'
+          this.openServerResponseModal()
         })
     },
 
@@ -253,6 +259,7 @@ export default {
 
     closeServerResponseModal() {
       this.serverResponseModal.hide()
+      this.$emit('update-component')
     }
   }
 }

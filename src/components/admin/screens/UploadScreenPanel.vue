@@ -50,12 +50,12 @@ import { storage } from '../../../firebase'
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 //firebase database
 import { database } from '../../../firebase'
-import { ref as dbRef, push } from 'firebase/database'
+import { ref as dbRef, update } from 'firebase/database'
 
 export default {
   emits: ['remove-panel'],
 
-  props: ['screen', 'gameId', 'gameTitle', 'index', 'validation'],
+  props: ['screen', 'screens', 'gameId', 'gameTitle', 'index', 'validation'],
 
   data() {
     return {
@@ -153,10 +153,14 @@ export default {
           // Upload completed successfully, now we can get the download URL
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             console.log('File available at', downloadURL)
-            push(dbRef(database, 'screens'), {
+            this.screens.push({
               gameId: this.gameId,
               file: { name: this.screenName, type: this.screenType, size: this.screenSize },
               url: downloadURL
+            })
+
+            update(dbRef(database, `games/${this.gameId}`), {
+              screens: this.screens
             })
               .then(() => {
                 // Data saved successfully!

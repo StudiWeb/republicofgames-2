@@ -32,7 +32,11 @@ const router = createRouter({
         { name: 'screens', path: 'screens', component: TheScreens },
         { name: 'trailer', path: 'trailer', component: TheTrailer },
         { name: 'game-list', path: 'game-list', component: GameList },
-        { name: 'game-info', path: 'game-info', component: GameInfo }
+        {
+          name: 'game-info',
+          path: 'game-info',
+          component: GameInfo
+        }
       ]
     }
   ]

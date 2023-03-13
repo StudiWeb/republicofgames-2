@@ -1,9 +1,9 @@
 <template>
   <div class="mb-4">
     <label for="releaseDates" class="form-label">Select release date</label>
-    <select class="form-select" id="releaseDates" @change="selectReleaseDateId">
+    <select class="form-select" id="releaseDates" @change="selectReleaseDateIndex">
       <option value="none">none</option>
-      <option v-for="(date, index) in releaseDates" :key="index" :value="date.id">
+      <option v-for="(date, index) in releaseDates" :key="index" :value="index">
         {{ releaseDate(date) }}
       </option>
     </select>
@@ -13,11 +13,13 @@
 
 <script>
 export default {
+  emits: ['date-index'],
+
   props: ['releaseDates'],
 
   data() {
     return {
-      releaseDateId: ''
+      releaseDateIndex: ''
     }
   },
 
@@ -31,8 +33,8 @@ export default {
       return date.date + ' - ' + platformsString
     },
 
-    selectReleaseDateId(e) {
-      this.$emit('date-id', e.target.value)
+    selectReleaseDateIndex(e) {
+      this.$emit('date-index', e.target.value)
     }
   }
 }

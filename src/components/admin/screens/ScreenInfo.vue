@@ -35,7 +35,7 @@
 <script>
 //database
 import { database } from '../../../firebase'
-import { ref as dbRef, set } from 'firebase/database'
+import { ref as dbRef, update } from 'firebase/database'
 //storage
 import { storage } from '../../../firebase'
 import { ref, deleteObject } from 'firebase/storage'
@@ -51,7 +51,7 @@ export default {
 
   emits: ['update-screens'],
 
-  props: ['screen', 'gameTitle'],
+  props: ['index', 'screen', 'screens', 'gameTitle', 'gameId'],
 
   data() {
     return {
@@ -73,11 +73,11 @@ export default {
     },
 
     dataModalId() {
-      return 'dataModal-' + this.screenId
+      return 'dataModal-' + this.index
     },
 
     serverResponseModalId() {
-      return 'serverResponseModal-' + this.screenId
+      return 'serverResponseModal-' + this.index
     }
   },
 
@@ -97,30 +97,30 @@ export default {
       await deleteObject(ref(storage, screenPath))
         .then(() => {
           // File deleted successfully
-          set(dbRef(database, `screens/${this.screenId}`), null)
+          this.screens.splice(this.index, 1)
+          update(dbRef(database, `games/${this.gameId}`), {
+            screens: this.screens
+          })
             .then(() => {
               // Data saved successfully!
               this.uploading = false
               this.serverResponse = 'You deleted the screen successfully!'
-              this.openServerResponseModal()
             })
             .catch((error) => {
               // The write failed...
               this.uploading = false
               this.serverResponse = 'Ups something went wrong... You did not delete the screen.'
-              this.openServerResponseModal()
             })
         })
         .catch((error) => {
           // Uh-oh, an error occurred!
           this.uploading = false
           this.serverResponse = 'Ups something went wrong... You did not delete the screen.'
-          this.openServerResponseModal()
         })
     },
 
     openDataModal() {
-      this.dataModal = new bootstrap.Modal('#' + this.dataModalId, {
+      this.dataModal = new bootstrap.Modal(`#${this.dataModalId}`, {
         keyboard: false
       })
       this.dataModal.show()
@@ -131,7 +131,7 @@ export default {
     },
 
     openServerResponseModal() {
-      this.serverResponseModal = new bootstrap.Modal('#' + this.serverResponseModalId, {
+      this.serverResponseModal = new bootstrap.Modal(`#${this.serverResponseModalId}`, {
         keyboard: false
       })
       this.serverResponseModal.show()

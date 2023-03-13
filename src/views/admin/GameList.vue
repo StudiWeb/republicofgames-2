@@ -21,9 +21,6 @@
   </table>
 </template>
 <script>
-import { database } from '../../firebase'
-import { ref, get, child } from 'firebase/database'
-
 import PageTitle from '../../components/admin/UI/PageTitle.vue'
 import SearchGame from '../../components/admin/game-list/SearchGame.vue'
 

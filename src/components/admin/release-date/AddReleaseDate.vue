@@ -5,6 +5,8 @@
     <button class="btn btn-primary align-self-end" @click="validateData">Add release date</button>
   </div>
 
+  <UploadSpinner v-if="uploading" />
+
   <base-modal id="dataModal" title="Release date">
     <template #body> <ReleaseDateBadge :date="date" :platforms="platforms" /> </template>
     <template #footer>
@@ -36,19 +38,20 @@
 </template>
 <script>
 import { database } from '../../../firebase'
-import { ref, push } from 'firebase/database'
+import { ref, update } from 'firebase/database'
 
 import ReleaseDatePanel from './ReleaseDatePanel.vue'
 import ReleaseDateBadge from '../../reusable/ReleaseDateBadge.vue'
 import BaseModal from '../UI/BaseModal.vue'
 import PageSubtitle from '../UI/PageSubtitle.vue'
+import UploadSpinner from '../../reusable/UploadSpinner.vue'
 
 export default {
-  components: { ReleaseDatePanel, ReleaseDateBadge, BaseModal, PageSubtitle },
+  components: { ReleaseDatePanel, ReleaseDateBadge, BaseModal, PageSubtitle, UploadSpinner },
 
   emits: ['update-component'],
 
-  props: ['game'],
+  props: ['game', 'releaseDates'],
 
   data() {
     return {
@@ -57,7 +60,8 @@ export default {
       dataModal: false,
       validationModal: false,
       serverResponseModal: null,
-      serverResponse: ''
+      serverResponse: '',
+      uploading: false
     }
   },
 
@@ -84,6 +88,7 @@ export default {
       }
 
       if (validation) {
+        this.releaseDates.push({ date: this.date, platforms: this.platforms })
         this.openDataModal()
       } else {
         this.openValidationModal()
@@ -93,18 +98,19 @@ export default {
     async addReleaseDate() {
       this.closeDataModal()
 
-      await push(ref(database, 'releaseDates'), {
-        gameId: this.gameId,
-        date: this.date,
-        platforms: this.platforms
+      this.uploading = true
+      await update(ref(database, `games/${this.gameId}`), {
+        releaseDates: this.releaseDates
       })
         .then(() => {
           // Data saved successfully!
+          this.uploading = false
           this.serverResponse = 'You added a new release date to the game successfully!'
           this.openServerResponseModal()
         })
         .catch((error) => {
           // The write failed...
+          this.uploading = false
           this.serverResponse =
             'Ups something went wrong... you did not add the release date to the game>!'
           this.openServerResponseModal()

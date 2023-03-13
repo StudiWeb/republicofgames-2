@@ -2,14 +2,16 @@
   <PageSubtitle title="Delete release date" />
   <AlertInfo v-if="!hasGameReleaseDate" :info="alertInfo" />
   <div v-else>
-    <SelectReleaseDate @date-id="setReleaseDateId" :releaseDates="releaseDates" />
-    <div v-if="releaseDateId != ''" class="d-flex flex-column">
+    <SelectReleaseDate @date-index="setReleaseDateIndex" :releaseDates="releaseDates" />
+    <div v-if="releaseDateIndex" class="d-flex flex-column">
       <ReleaseDateBadge class="align-self-start mb-4" :date="releaseDate" :platforms="platforms" />
       <button @click="openDataModal" class="btn btn-primary align-self-start">
         Delete release date
       </button>
     </div>
   </div>
+
+  <UploadSpinner v-if="uploading" />
 
   <base-modal id="dataModal" title="Release date">
     <template #body> <ReleaseDateBadge :date="releaseDate" :platforms="platforms" /> </template>
@@ -33,13 +35,14 @@
 </template>
 <script>
 import { database } from '../../../firebase'
-import { ref, set } from 'firebase/database'
+import { ref, update } from 'firebase/database'
 
 import PageSubtitle from '../UI/PageSubtitle.vue'
 import SelectReleaseDate from './SelectReleaseDate.vue'
 import ReleaseDateBadge from '../../reusable/ReleaseDateBadge.vue'
 import BaseModal from '../UI/BaseModal.vue'
 import AlertInfo from '../UI/AlertInfo.vue'
+import UploadSpinner from '../../reusable/UploadSpinner.vue'
 
 export default {
   components: {
@@ -47,35 +50,36 @@ export default {
     SelectReleaseDate,
     ReleaseDateBadge,
     BaseModal,
-    AlertInfo
+    AlertInfo,
+    UploadSpinner
   },
 
   emits: ['update-component'],
 
-  props: ['releaseDates'],
+  props: ['game', 'releaseDates'],
 
   data() {
     return {
-      releaseDateId: '',
+      releaseDateIndex: null,
       dataModal: false,
       serverResponseModal: null,
-      serverResponse: ''
+      serverResponse: '',
+      uploading: false
     }
   },
 
   computed: {
-    releaseDateId() {
-      const releaseDate = this.releaseDates.find((date) => date.id === this.releaseDateId)
-      return releaseDate ? releaseDate.id : ''
+    gameId() {
+      return this.game.id
     },
 
     releaseDate() {
-      const releaseDate = this.releaseDates.find((date) => date.id === this.releaseDateId)
+      const releaseDate = this.releaseDates[this.releaseDateIndex]
       return releaseDate ? releaseDate.date : ''
     },
 
     platforms() {
-      const releaseDate = this.releaseDates.find((date) => date.id === this.releaseDateId)
+      const releaseDate = this.releaseDates[this.releaseDateIndex]
       return releaseDate ? releaseDate.platforms : []
     },
 
@@ -89,20 +93,27 @@ export default {
   },
 
   methods: {
-    setReleaseDateId(id) {
-      this.releaseDateId = id
+    setReleaseDateIndex(index) {
+      this.releaseDateIndex = index
     },
 
-    deleteReleaseDate() {
+    async deleteReleaseDate() {
       this.closeDataModal()
-      set(ref(database, `releaseDates/${this.releaseDateId}`), null)
+      this.releaseDates.splice(this.releaseDateIndex, 1)
+
+      this.uploading = true
+      await update(ref(database, `games/${this.gameId}`), {
+        releaseDates: this.releaseDates
+      })
         .then(() => {
           // Data saved successfully!
+          this.uploading = false
           this.serverResponse = 'You deleted the release date successfully.'
           this.openServerResponseModal()
         })
         .catch((error) => {
           // The write failed...
+          this.uploading = false
           this.serverResponse = 'Ups something went wrong ... You did not delete the release date.'
           this.openServerResponseModal()
         })

@@ -3,7 +3,7 @@
   <div class="d-flex flex-column mb-4">
     <div>
       <label for="formFile" class="form-label">Choose screen</label>
-      <input @change="setScreens" class="form-control" type="file" id="formFile" multiple />
+      <input @change="setFiles" class="form-control" type="file" id="formFile" multiple />
     </div>
   </div>
   <component
@@ -11,6 +11,7 @@
     v-for="(data, index) in files"
     :key="index"
     :screen="data.screen"
+    :screens="this.screens"
     :validation="data.validation"
     :gameId="gameId"
     :gameTitle="gameTitle"
@@ -56,7 +57,7 @@ export default {
   },
 
   methods: {
-    setScreens(event) {
+    setFiles(event) {
       this.files = []
       const files = event.target.files
 

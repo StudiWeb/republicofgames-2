@@ -59,6 +59,13 @@ export default {
         case 'delete trailer':
           this.$emit('set-component', 'delete-trailer')
           break
+        //ALL ABOUT GAME
+        case 'edit game':
+          this.$emit('set-component', 'edit-game')
+          break
+        case 'delete game':
+          this.$emit('set-component', 'delete-game')
+          break
       }
     }
   }

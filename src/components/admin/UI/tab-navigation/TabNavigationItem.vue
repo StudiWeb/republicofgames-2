@@ -31,6 +31,9 @@ export default {
         case 'trailer':
           this.$emit('set-component', 'the-trailer')
           break
+        case 'game':
+          this.$emit('set-component', 'the-game')
+          break
       }
     }
   }
